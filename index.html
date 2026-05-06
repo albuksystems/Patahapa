@@ -1,1 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pata Hapa — Find It Here</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #25D366;
+    --green-dark: #128C7E;
+    --bg: #0a0a0a;
+    --surface: #111;
+    --surface2: #1a1a1a;
+    --gold: #F4C430;
+    --text: #f0f0f0;
+    --muted: #888;
+    --chat-bg: #0d1117;
+    --bubble-in: #1e2a1e;
+    --bubble-out: #1a3a2a;
+    --border: #222;
+    --blue: #7B8FFF;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
 
+  /* HERO */
+  .hero { width:100%; padding:32px 20px 20px; text-align:center; border-bottom:1px solid var(--border); background:linear-gradient(180deg,#0d1f0d 0%,var(--bg) 100%); position:relative; }
+  .lang-toggle { position:absolute; top:16px; right:16px; display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+  .lang-btn { padding:6px 14px; font-family:'Space Mono',monospace; font-size:0.65rem; font-weight:700; cursor:pointer; border:none; background:transparent; color:var(--muted); transition:all 0.2s; letter-spacing:1px; }
+  .lang-btn.active { background:var(--green); color:#000; }
+  .logo { font-size:2.6rem; font-weight:800; color:var(--green); letter-spacing:-1px; }
+  .logo span { color:var(--gold); }
+  .tagline { font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:6px; letter-spacing:2px; text-transform:uppercase; }
+  .corridor-badge { display:inline-block; margin-top:10px; padding:4px 14px; background:#1a1a1a; border:1px solid var(--green-dark); border-radius:20px; font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--green); letter-spacing:1px; }
+
+  /* MAIN */
+  .main { width:100%; max-width:480px; padding:20px 16px; display:flex; flex-direction:column; gap:16px; }
+
+  /* PHONE */
+  .phone { background:var(--chat-bg); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
+  .phone-header { background:var(--green-dark); padding:14px 16px; display:flex; align-items:center; gap:12px; }
+  .phone-avatar { width:40px; height:40px; background:var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; color:#000; flex-shrink:0; }
+  .phone-info h3 { font-size:0.95rem; font-weight:600; color:#fff; }
+  .phone-info p { font-family:'Space Mono',monospace; font-size:0.62rem; color:rgba(255,255,255,0.6); margin-top:2px; }
+  .online-dot { width:8px; height:8px; background:var(--green); border-radius:50%; margin-left:auto; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .chat-area { height:400px; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:10px; background:var(--chat-bg); }
+  .chat-area::-webkit-scrollbar { width:4px; }
+  .chat-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .msg { max-width:88%; padding:10px 13px; border-radius:12px; font-size:0.875rem; line-height:1.55; animation:fadeUp 0.3s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.incoming { background:var(--bubble-in); border:1px solid #1f3a1f; align-self:flex-start; border-bottom-left-radius:4px; }
+  .msg.outgoing { background:var(--bubble-out); border:1px solid #1a4a2a; align-self:flex-end; border-bottom-right-radius:4px; }
+  .msg .time { font-family:'Space Mono',monospace; font-size:0.58rem; color:var(--muted); margin-top:5px; text-align:right; }
+  .msg .time.left { text-align:left; }
+
+  .listing-card { background:rgba(0,0,0,0.35); border:1px solid var(--green-dark); border-radius:10px; padding:11px; margin:6px 0; }
+  .listing-card .shop-name { font-weight:700; color:var(--green); font-size:0.88rem; }
+  .listing-card .shop-detail { color:var(--muted); font-family:'Space Mono',monospace; font-size:0.62rem; margin-top:3px; }
+  .listing-card .shop-price { color:var(--gold); font-weight:600; margin-top:5px; font-size:0.8rem; }
+  .card-actions { display:flex; gap:8px; margin-top:9px; flex-wrap:wrap; }
+
+  .wa-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; background:var(--green); color:#000; border-radius:7px; font-size:0.68rem; font-weight:700; cursor:pointer; text-decoration:none; font-family:'Space Mono',monospace; border:none; transition:background 0.2s; }
+  .wa-btn:hover { background:#1db954; }
+  .promo-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; background:transparent; color:var(--gold); border-radius:7px; font-size:0.68rem; font-weight:700; cursor:pointer; font-family:'Space Mono',monospace; border:1px solid var(--gold); transition:all 0.2s; }
+  .promo-btn:hover { background:rgba(244,196,48,0.1); }
+
+  .typing { display:flex; align-items:center; gap:4px; padding:10px 13px; background:var(--bubble-in); border:1px solid #1f3a1f; border-radius:12px; border-bottom-left-radius:4px; align-self:flex-start; width:fit-content; }
+  .typing span { width:6px; height:6px; background:var(--green); border-radius:50%; animation:bounce 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  .quick-replies { display:flex; gap:8px; flex-wrap:wrap; padding:10px 12px 12px; background:var(--surface2); border-top:1px solid var(--border); }
+  .qr-btn { padding:6px 12px; background:transparent; border:1px solid var(--green-dark); border-radius:16px; color:var(--green); font-family:'Space Mono',monospace; font-size:0.62rem; cursor:pointer; transition:all 0.2s; }
+  .qr-btn:hover { background:var(--green-dark); color:#fff; }
+
+  .chat-input-area { padding:12px; background:var(--surface2); display:flex; gap:8px; align-items:center; }
+  .chat-input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:10px 16px; color:var(--text); font-family:'Syne',sans-serif; font-size:0.875rem; outline:none; transition:border-color 0.2s; }
+  .chat-input:focus { border-color:var(--green-dark); }
+  .chat-input::placeholder { color:var(--muted); }
+  .send-btn { width:42px; height:42px; background:var(--green); border:none; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.2s,transform 0.1s; }
+  .send-btn:hover { background:#1db954; }
+  .send-btn:active { transform:scale(0.95); }
+  .send-btn svg { fill:#000; }
+
+  /* TIERS */
+  .info-section { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; }
+  .info-section h3 { font-size:0.72rem; color:var(--gold); font-family:'Space Mono',monospace; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+  .tier-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .tier-row:last-child { border-bottom:none; }
+  .tier-badge { padding:3px 10px; border-radius:12px; font-family:'Space Mono',monospace; font-size:0.62rem; font-weight:700; flex-shrink:0; width:72px; text-align:center; }
+  .tier-mtaa { background:#1a2a1a; color:var(--green); border:1px solid var(--green-dark); }
+  .tier-biashara { background:#1a1a2a; color:var(--blue); border:1px solid #3a3a6a; }
+  .tier-corridor { background:#2a1a00; color:var(--gold); border:1px solid #5a4000; }
+  .tier-info { flex:1; }
+  .tier-info p { font-size:0.8rem; }
+  .tier-info small { font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); }
+  .tier-price { font-weight:800; font-size:1rem; flex-shrink:0; }
+  .tier-price small { font-size:0.58rem; color:var(--muted); font-weight:400; display:block; text-align:right; font-family:'Space Mono',monospace; }
+
+  /* CTA */
+  .cta-section { background:linear-gradient(135deg,#0d1f0d 0%,#1a2a00 100%); border:1px solid var(--green-dark); border-radius:16px; padding:22px 20px; text-align:center; }
+  .cta-section h3 { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
+  .cta-section p { font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--muted); margin-bottom:16px; line-height:1.6; }
+  .cta-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--green); color:#000; border-radius:12px; font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; text-decoration:none; cursor:pointer; border:none; transition:background 0.2s,transform 0.1s; }
+  .cta-btn:hover { background:#1db954; }
+
+  .footer { padding:20px; text-align:center; font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted); line-height:1.8; }
+  .footer strong { color:var(--green); }
+
+  /* MODAL */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:500; align-items:flex-end; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); border-radius:20px 20px 0 0; padding:24px 20px 36px; width:100%; max-width:480px; animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .modal-header h3 { font-size:1rem; font-weight:700; }
+  .modal-close { width:32px; height:32px; background:var(--surface2); border:1px solid var(--border); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:1.2rem; line-height:1; }
+  .modal-business { font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--green); margin-bottom:14px; letter-spacing:1px; }
+  .promo-text { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:16px; font-size:0.85rem; line-height:1.7; color:var(--text); min-height:120px; white-space:pre-wrap; word-break:break-word; }
+  .promo-loading { display:flex; align-items:center; gap:10px; color:var(--muted); font-family:'Space Mono',monospace; font-size:0.7rem; padding:20px 0; justify-content:center; }
+  .modal-actions { display:flex; gap:10px; margin-top:14px; }
+  .modal-copy { flex:1; padding:12px; background:var(--green); border:none; border-radius:10px; color:#000; font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; }
+  .modal-copy:hover { background:#1db954; }
+  .modal-wa { padding:12px 16px; background:transparent; border:1px solid var(--green-dark); border-radius:10px; color:var(--green); font-family:'Syne',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; white-space:nowrap; transition:all 0.2s; text-decoration:none; display:flex; align-items:center; }
+  .modal-wa:hover { background:var(--green-dark); color:#fff; }
+</style>
+</head>
+<body>
+
+<!-- PROMO MODAL -->
+<div class="modal-overlay" id="promoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">🤖 AI Promo</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-business" id="modalBusiness"></div>
+    <div class="promo-text" id="promoText">
+      <div class="promo-loading"><div class="typing"><span></span><span></span><span></span></div> Generating...</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-copy" onclick="copyPromo()">📋 Copy</button>
+      <a class="modal-wa" id="modalWaShare" href="#" target="_blank">Share on WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btnSW" onclick="setLang('sw')">SW</button>
+  </div>
+  <div class="logo">Pata<span>Hapa</span></div>
+  <div class="tagline">Mlolongo · Syokimau · Athi River</div>
+  <div class="corridor-badge" id="badgeText">🟢 Live Directory — Mlolongo Corridor</div>
+</div>
+
+<div class="main">
+
+  <div class="phone">
+    <div class="phone-header">
+      <div class="phone-avatar">PH</div>
+      <div class="phone-info">
+        <h3>Pata Hapa</h3>
+        <p id="phoneSubtitle">Mlolongo Corridor Directory</p>
+      </div>
+      <div class="online-dot"></div>
+    </div>
+    <div class="chat-area" id="chatArea"></div>
+    <div class="quick-replies" id="quickReplies"></div>
+    <div class="chat-input-area">
+      <input class="chat-input" id="chatInput" onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="send-btn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- TIERS -->
+  <div class="info-section">
+    <h3 id="tierHeading">Listing Plans</h3>
+    <div class="tier-row">
+      <div class="tier-badge tier-mtaa">MTAA</div>
+      <div class="tier-info">
+        <p id="mtaaDesc">Kiosks & small shops</p>
+        <small id="mtaaDetail">Name · WhatsApp · Location · 1 category</small>
+      </div>
+      <div class="tier-price">99<small>KES/mo</small></div>
+    </div>
+    <div class="tier-row">
+      <div class="tier-badge tier-biashara">BIASHARA</div>
+      <div class="tier-info">
+        <p id="biasharaDesc">Mid shops, salons, hardware</p>
+        <small id="biasharaDetail">Featured · Price updates · Top of category</small>
+      </div>
+      <div class="tier-price">199<small>KES/mo</small></div>
+    </div>
+    <div class="tier-row">
+      <div class="tier-badge tier-corridor">CORRIDOR</div>
+      <div class="tier-info">
+        <p id="corridorDesc">Electronics, pharmacy, wholesale</p>
+        <small id="corridorDetail">Top placement · Multi-category · Verified badge</small>
+      </div>
+      <div class="tier-price">299<small>KES/mo</small></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h3 id="ctaHeading">List Your Business</h3>
+    <p id="ctaBody">Get found by customers in Mlolongo, Syokimau & Athi River. First month free for early subscribers.</p>
+    <a class="cta-btn" href="https://wa.me/254768789382?text=I%20want%20to%20list%20my%20business%20on%20Pata%20Hapa" target="_blank">
+      📲 <span id="ctaBtnText">WhatsApp Us to List</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    Powered by <strong>Albuk Global</strong> · Mlolongo Corridor<br>
+    +254 768 789 382
+  </div>
+</div>
+
+<script>
+// ── LANGUAGE ──────────────────────────────────────────────────
+let lang = 'en';
+
+const T = {
+  en: {
+    badge:'🟢 Live Directory — Mlolongo Corridor',
+    phoneSubtitle:'Mlolongo Corridor Directory',
+    placeholder:'Type what you are looking for...',
+    tierHeading:'Listing Plans',
+    mtaaDesc:'Kiosks & small shops', mtaaDetail:'Name · WhatsApp · Location · 1 category',
+    biasharaDesc:'Mid shops, salons, hardware', biasharaDetail:'Featured · Price updates · Top of category',
+    corridorDesc:'Electronics, pharmacy, wholesale', corridorDetail:'Top placement · Multi-category · Verified badge',
+    ctaHeading:'List Your Business',
+    ctaBody:'Get found by customers in Mlolongo, Syokimau & Athi River. First month free for early subscribers.',
+    ctaBtnText:'WhatsApp Us to List',
+    welcome:'👋 <strong>Welcome to Pata Hapa!</strong><br><br>Find any product or service along the Mlolongo corridor.<br><br>Type what you need — e.g. <em>"unga"</em>, <em>"hardware"</em>, <em>"gas"</em>, <em>"phone repair"</em>',
+    noResults:'Sorry, we are still adding more businesses for <strong>{q}</strong>.<br><br>Try: unga · hardware · gas · salon · phone repair · electronics<br><br>Or contact us directly 👇',
+    listIntent:'🏪 <strong>Great — let\'s get you listed!</strong><br><br>Our team will reach out shortly to set up your listing.<br><br>Tap below to chat with us directly 👇',
+    listBtn:'Chat with Albuk Global',
+    greeting:'👋 Hello! Welcome to Pata Hapa.<br><br>Tell me what you are looking for — products, services, prices. We will find it for you on the corridor.',
+    resultsHeader:'📍 {cat} — Mlolongo Corridor',
+    waBtn:'WhatsApp', promoBtn:'✨ AI Promo',
+    quickReplies:['🌾 Unga','🔧 Hardware','🔥 Gas','💇 Salon','📱 Phone Repair','🏪 List my shop'],
+    quickValues:['unga','hardware','gas','salon','phone repair','list my shop'],
+    modalTitle:'🤖 AI Promo Generator', generating:'Generating your promo...',
+    copyBtn:'📋 Copy', shareBtn:'Share on WhatsApp',
+    promoPrompt:(n,l,p,c)=>`Write a punchy WhatsApp status or Facebook post (max 60 words) promoting this local business in Mlolongo, Kenya. Business: ${n}. Location: ${l}. ${p?'Price info: '+p+'.':''} Categories: ${c.join(', ')}. Make it warm, local and compelling. Include emoji. End with a WhatsApp call-to-action. Write in English only.`,
+  },
+  sw: {
+    badge:'🟢 Orodha ya Biashara — Mlolongo',
+    phoneSubtitle:'Orodha ya Mlolongo Corridor',
+    placeholder:'Andika unachotafuta...',
+    tierHeading:'Mipango ya Uanachama',
+    mtaaDesc:'Kiosks na maduka madogo', mtaaDetail:'Jina · WhatsApp · Mahali · Kategoria 1',
+    biasharaDesc:'Maduka ya kati, saluni, hardware', biasharaDetail:'Inayoonekana · Bei za sasa · Juu ya kategoria',
+    corridorDesc:'Elektroniki, dawa, jumla', corridorDetail:'Nafasi ya juu · Kategoria nyingi · Alama ya uthibitisho',
+    ctaHeading:'Orodhesha Biashara Yako',
+    ctaBody:'Wateja wanaotafuta Mlolongo, Syokimau na Athi River wakupate. Mwezi wa kwanza bure.',
+    ctaBtnText:'WhatsApp Kuorodhesha',
+    welcome:'👋 <strong>Karibu Pata Hapa!</strong><br><br>Tafuta bidhaa au huduma yoyote kando ya barabara ya Mlolongo.<br><br>Andika unachotafuta — mfano: <em>"unga"</em>, <em>"hardware"</em>, <em>"gas"</em>, <em>"kutengeneza simu"</em>',
+    noResults:'Samahani, bado tunaongeza biashara zaidi kwa <strong>{q}</strong>.<br><br>Jaribu: unga · hardware · gas · saluni · kutengeneza simu<br><br>Au wasiliana nasi moja kwa moja 👇',
+    listIntent:'🏪 <strong>Asante — tutakuorodhesha!</strong><br><br>Timu yetu itawasiliana nawe haraka.<br><br>Bonyeza hapa kuongea nasi moja kwa moja 👇',
+    listBtn:'Ongea na Albuk Global',
+    greeting:'👋 Habari! Karibu Pata Hapa.<br><br>Niambie unatafuta nini leo — bidhaa, huduma, bei — tutakusaidia kupata haraka.',
+    resultsHeader:'📍 {cat} — Mlolongo Corridor',
+    waBtn:'WhatsApp', promoBtn:'✨ AI Promo',
+    quickReplies:['🌾 Unga','🔧 Hardware','🔥 Gas','💇 Saluni','📱 Kutengeneza Simu','🏪 Orodhesha'],
+    quickValues:['unga','hardware','gas','salon','kutengeneza simu','orodhesha'],
+    modalTitle:'🤖 AI Promo Generator', generating:'Inaunda promo yako...',
+    copyBtn:'📋 Nakili', shareBtn:'Shiriki WhatsApp',
+    promoPrompt:(n,l,p,c)=>`Andika ujumbe mfupi wa WhatsApp status au Facebook (maneno 60 tu) kukuza biashara hii Mlolongo, Kenya. Jina: ${n}. Mahali: ${l}. ${p?'Bei: '+p+'.':''} Aina: ${c.join(', ')}. Fanya iwe ya kirafiki na ya kuvutia. Weka emoji. Mwishe na wito wa WhatsApp. Andika kwa Kiswahili tu.`,
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btnEN').classList.toggle('active', l==='en');
+  document.getElementById('btnSW').classList.toggle('active', l==='sw');
+  const t = T[l];
+  ['badgeText','phoneSubtitle','tierHeading','mtaaDesc','mtaaDetail',
+   'biasharaDesc','biasharaDetail','corridorDesc','corridorDetail',
+   'ctaHeading','ctaBody','ctaBtnText'].forEach(id => {
+    const el = document.getElementById(id);
+    const key = id === 'badgeText' ? 'badge' : id;
+    if (el && t[key]) el.textContent = t[key];
+  });
+  document.getElementById('chatInput').placeholder = t.placeholder;
+  renderQuickReplies();
+  document.getElementById
